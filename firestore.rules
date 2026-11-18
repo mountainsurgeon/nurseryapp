@@ -1,0 +1,19 @@
+rules_version = '2';
+// Paste this into Firebase console > Firestore > Rules, then click Publish.
+// List every account that may use the app, in all lowercase.
+// Keep the watch line only if you set up the Apple Watch / Siri shortcut.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isFamily() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'parent-one@example.com',
+          'parent-two@example.com',
+          'watch@example.com'
+        ];
+    }
+    match /{document=**} {
+      allow read, write: if isFamily();
+    }
+  }
+}

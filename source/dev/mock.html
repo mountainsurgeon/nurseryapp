@@ -1,0 +1,19 @@
+<!doctype html>
+<!-- Local test page: runs the built app against an in-memory fake of Firebase.
+     From the nursery-log-kit folder run:  python3 -m http.server 8000
+     then open http://localhost:8000/source/dev/mock.html
+     Test accounts: mom@example.com / dad@example.com, password "pw".
+     Add ?auto=mom@example.com to skip the sign-in screen. -->
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nursery Log (mock)</title>
+<script>
+  // Load the real page's styles and body, then swap Firebase for the mock.
+  fetch('../../site/index.html').then(r => r.text()).then(html => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('head style, head link[rel=stylesheet]').forEach(n => document.head.appendChild(n));
+    doc.querySelectorAll('body > :not(script)').forEach(n => document.body.appendChild(n));
+    const mock = document.createElement('script'); mock.src = 'mockbackend.js';
+    mock.onload = () => { const s = document.createElement('script'); s.type = 'module'; s.src = '../../site/app.js'; document.body.appendChild(s); };
+    document.body.appendChild(mock);
+  });
+</script></head><body></body></html>
